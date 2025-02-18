@@ -4,7 +4,7 @@ using SpecialFunctions
 """
     AE struct for all-electron calculations.  Mimics the 'frozen' class behavior in Python.
 """
-Base.@kwdef struct AE
+mutable struct AE
     Z::Int                    # Atomic number
     config::Vector{String}    # Electron configuration, e.g., ["1s2", "2s2", "2p6"]
     n::Vector{Int}           # Principal quantum number for each orbital

@@ -2,10 +2,14 @@
 
 using LinearAlgebra
 using Printf
-using Parameters
+# using Parameters
 
 # export RadialGrid
 
+# Add this line at the top to opt out of precompilation
+# __precompile__(false)
+
+# @with_kw 
 mutable struct RadialGrid
     zeta::Float64  # nuclear charge
     r::Vector{Float64}  # Radial Points

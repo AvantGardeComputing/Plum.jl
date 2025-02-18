@@ -7,7 +7,6 @@ end
 
 
 @testset "grid.jl" begin
-    # include("../src/grid.jl")
     zeta = 1.0
     rmin = 1e-4
     rmax=50.0

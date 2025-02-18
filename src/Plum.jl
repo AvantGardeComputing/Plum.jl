@@ -2,7 +2,8 @@ module Plum
 
 
 # Write your package code here.
-export RadialGrid
 include("grid.jl")
+export RadialGrid
+
 
 end
