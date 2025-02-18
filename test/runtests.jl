@@ -4,3 +4,15 @@ using Test
 @testset "Plum.jl" begin
     # Write your tests here.
 end
+
+
+@testset "grid.jl" begin
+    # include("../src/grid.jl")
+    zeta = 1.0
+    rmin = 1e-4
+    rmax=50.0
+    N = 1001
+    rg=Plum.RadialGrid(zeta = zeta, rmin = rmin, rmax = rmax, N = N)
+    @test rg.dr[1] == 1.3122363377403812e-6
+    @test rg.dr[end] == 0.6561181688701899
+end
