@@ -19,17 +19,17 @@ end
 struct RadialGrid
     r::Vector{Float64}    # Radial points
     dr::Vector{Float64}   # Grid spacing
-    N::Int               # Number of grid points
+    np::Int               # Number of grid points
 end
 
 """
     Create logarithmic radial grid
 """
-function create_radial_grid(rmin::Float64=1e-7, rmax::Float64=50.0, N::Int=1000)
-    r = exp.(range(log(rmin), log(rmax), length=N))
+function create_radial_grid(rmin::Float64=1e-7, rmax::Float64=50.0, np::Int=1000)
+    r = exp.(range(log(rmin), log(rmax), length=np))
     dr = diff(r)
     push!(dr, dr[end])
-    RadialGrid(r, dr, N)
+    RadialGrid(r, dr, np)
 end
 
 """
@@ -52,7 +52,7 @@ end
     Solve radial Schrödinger equation using Numerov method
 """
 function solve_radial_schrodinger(grid::RadialGrid, l::Int, energy::Float64, potential::Vector{Float64})
-    ψ = zeros(grid.N)
+    ψ = zeros(grid.np)
     
     # Initialize wavefunction
     ψ[1] = grid.r[1]^(l+1)
@@ -62,7 +62,7 @@ function solve_radial_schrodinger(grid::RadialGrid, l::Int, energy::Float64, pot
     Veff = potential + @. l*(l+1)/(2*grid.r^2)
     
     # Numerov algorithm
-    for i in 2:(grid.N-1)
+    for i in 2:(grid.np-1)
         k2 = 2.0 * (energy - Veff[i])
         k2_plus = 2.0 * (energy - Veff[i+1])
         k2_minus = 2.0 * (energy - Veff[i-1])
@@ -84,8 +84,8 @@ end
 """
 function solve_dirac(grid::RadialGrid, κ::Int, energy::Float64, potential::Vector{Float64})
     # Large and small components of the wavefunction
-    G = zeros(grid.N)
-    F = zeros(grid.N)
+    G = zeros(grid.np)
+    F = zeros(grid.np)
     
     c = 137.036  # Speed of light in atomic units
     
@@ -95,7 +95,7 @@ function solve_dirac(grid::RadialGrid, κ::Int, energy::Float64, potential::Vect
     F[1] = G[1] * sqrt((energy + c^2)/(energy - c^2))
     
     # Integration using RK4 method
-    for i in 1:(grid.N-1)
+    for i in 1:(grid.np-1)
         h = grid.dr[i]
         
         k1_G = κ/r[i] * G[i] - (energy + c^2 - potential[i])/c * F[i]
@@ -139,7 +139,7 @@ function all_electron(ae::AE; relativistic::Symbol=:none)
     Vnuc = nuclear_potential(grid, ae.Z)
     
     # Initialize electronic potential (will be updated self-consistently)
-    Vel = zeros(grid.N)
+    Vel = zeros(grid.np)
     
     # Maximum number of SCF iterations
     max_scf = 100
@@ -177,7 +177,7 @@ function all_electron(ae::AE; relativistic::Symbol=:none)
         end
         
         # Update electronic potential using density
-        ρ = zeros(grid.N)
+        ρ = zeros(grid.np)
         for (i, ψ) in enumerate(ψs)
             if relativistic == :full
                 G, F = ψ
